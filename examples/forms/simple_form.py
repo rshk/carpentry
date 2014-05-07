@@ -3,7 +3,7 @@ Generate a simple form.
 Requires flask.
 """
 
-from flask import Flask, request
+from flask import Flask, request, escape
 
 from carpentry.contrib.forms import ModelForm
 from carpentry import BaseObject, StringField
@@ -59,9 +59,9 @@ def landing_page():
 @app.route('/submit', methods=['POST'])
 def submitted_page():
     return RESULTS_PAGE.format(
-        first=request.form['first_name'],
-        last=request.form['last_name'],
-        email=request.form['email'])
+        first=escape(request.form['first_name']),
+        last=escape(request.form['last_name']),
+        email=escape(request.form['email']))
 
 
 if __name__ == '__main__':
