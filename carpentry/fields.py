@@ -3,12 +3,12 @@ import copy
 from .base import BaseField, MAPPING_TYPES, SEQUENCE_TYPES
 
 
-__all__ = ['StringField', 'ListField', 'DictField',
-           'GroupsField', 'ExtrasField']
+__all__ = ['StringField', 'BoolField', 'IntegerField', 'ListField',
+           'SetField', 'DictField']
 
 
 class StringField(BaseField):
-    default = None
+    default = ''
 
     def validate(self, instance, name, value):
         if value is None:
@@ -54,10 +54,13 @@ class IntegerField(BaseField):
 
 
 class MutableFieldMixin(object):
+    """Mixin providing common functionality for mutable fields"""
+
     def get(self, instance, name):
         """
-        When getting a mutable object, we need to make a copy,
-        in order to make sure we are still able to detect changes.
+        When getting a mutable object, we want to return a copy
+        of it, while keeping the original value away, in order to
+        be able to detect changes.
         """
 
         if name not in instance._updates:
@@ -73,7 +76,7 @@ class MutableFieldMixin(object):
         return instance._updates[name]
 
     def serialize(self, instance, name):
-        # Copy to prevent unwanted mutation
+        # Return a copy to prevent unwanted mutation
         return copy.deepcopy(self.get(instance, name))
 
     def is_modified(self, instance, name):
@@ -123,16 +126,3 @@ class DictField(MutableFieldMixin, BaseField):
         if not isinstance(value, MAPPING_TYPES):
             raise ValueError("{0} must be a dict".format(name))
         return value
-
-
-class GroupsField(SetField):
-    def validate(self, instance, name, value):
-        value = super(GroupsField, self).validate(instance, name, value)
-        if not all(isinstance(x, basestring) for x in value):
-            raise ValueError("{0} must be a list of strings".format(name))
-        return value
-
-
-class ExtrasField(DictField):
-    def validate(self, instance, name, value):
-        return super(ExtrasField, self).validate(instance, name, value)
