@@ -234,15 +234,21 @@ class BaseObject(object):
             serialized[name] = field.serialize(self, name)
         return serialized
 
-    def iter_fields(self):
+    @classmethod
+    def iter_fields(cls):
         """
         Iterate over fields in this objects, yielding
         (name, field) pairs.
         """
-        for name in dir(self):
-            attr = object.__getattribute__(self, name)
+        for name in dir(cls):
+            # attr = object.__getattribute__(cls, name)
+            attr = getattr(cls, name)
             if isinstance(attr, BaseField):
                 yield name, attr
+
+    @property
+    def fields(self):
+        return dict(self.iter_fields())
 
     def is_equivalent(self, other, ignore_key=True):
         """
