@@ -27,7 +27,7 @@ class BaseField(object):
     default = None
     is_key = False
 
-    def __init__(self, default=NOTSET, is_key=NOTSET, required=False):
+    def __init__(self, **kwargs):
         """
         :param default:
             Default value (if not callable) or function
@@ -36,21 +36,23 @@ class BaseField(object):
             Boolean indicating whether this is a key field
             or not. Key fields are ignored when comparing
             using :py:meth:`is_equivalent`
+        :param required:
+            Mark the field as required, for validation purposes.
         """
 
         # todo: refactor to use kwargs
 
-        if default is not NOTSET:
-            self.default = default
-        if is_key is not NOTSET:
-            self.is_key = is_key
-        self.required = required
+        self.default = kwargs.get('default', self.default)
+        self.is_key = kwargs.get('is_key', self.is_key)
+        self.required = kwargs.get('required', False)
 
-        self._conf = {
+        kwargs.update({
             'default': self.default,
             'is_key': self.is_key,
             'required': self.required,
-        }
+        })
+
+        self._conf = kwargs
 
     def get(self, instance, name):
         """
