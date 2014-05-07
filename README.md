@@ -9,6 +9,10 @@ things as simple as possible.
 No metaclasses or descriptors are involved; no hackish code messing up
 with standard Python objects functionality either.
 
+## Documentation
+
+Documentation is hosted by Read The Docs: http://carpentry.readthedocs.org/
+
 
 ## Example model definition
 
