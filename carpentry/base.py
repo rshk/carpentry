@@ -161,6 +161,10 @@ class BaseObject(object):
     _updates = None
 
     def __init__(self, values=None):
+        """
+        :param values:
+            Initial values for the object. Must be a dict or dict-like.
+        """
         if values is None:
             values = {}
         if not isinstance(values, MAPPING_TYPES):
@@ -177,6 +181,10 @@ class BaseObject(object):
 
     @classmethod
     def from_dict(cls, data):
+        """
+        .. deprecated:: 0.1
+            use normal constructor :py:meth:`__init__` instead
+        """
         warnings.warn("from_dict() is deprecated -- use normal constructor",
                       DeprecationWarning)
         return cls(data)
@@ -188,6 +196,10 @@ class BaseObject(object):
                 field.set_initial(self, name, values[name])
 
     def to_dict(self):
+        """
+        .. deprecated:: 0.1
+            use :py:meth:`serialize` instead
+        """
         warnings.warn("to_dict() is deprecated -- use serialize()",
                       DeprecationWarning)
         return self.serialize()
@@ -246,10 +258,6 @@ class BaseObject(object):
             if isinstance(attr, BaseField):
                 yield name, attr
 
-    @property
-    def fields(self):
-        return dict(self.iter_fields())
-
     def is_equivalent(self, other, ignore_key=True):
         """
         Equivalency check between objects.
@@ -299,4 +307,7 @@ class BaseObject(object):
         return False
 
     def __repr__(self):
+        """
+        Provide a nice representation to objects, including serialized values.
+        """
         return u'{0}({1})'.format(self.__class__.__name__, self.serialize())
